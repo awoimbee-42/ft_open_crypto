@@ -6,12 +6,17 @@ On reading args:
 	it sucks.
 	md5 -s "test" -p ./file -> MD5 ("test"), stdin, file
 	md5 -p -s "test" ./file -> stdin, MD5 ("test"), file
-	
+	quiet only after -q
+	args list ends after first file
+
+
 	args for md5 & sha256 are same:
 	- p echo stdin & its checksum
 	- q quiet (dont print file origin)
 	- r reverse output
 	- s print sum
+
+
 
 md5:
 	input broken into 512bit (8 uint64 | 16 uint32) padded @ end by 1000..{multiple of 512b - 64b}{uint64: msg len (% 2^64)}

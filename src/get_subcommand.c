@@ -1,25 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   get_subcommand.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/03/05 16:53:55 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/05 18:07:05 by awoimbee         ###   ########.fr       */
+/*   Created: 2020/03/05 18:02:25 by awoimbee          #+#    #+#             */
+/*   Updated: 2020/03/05 18:06:34 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "main.h"
 
-int main_md5(char *s[]){ft_printf("main md5\n"); return 0;}
-int main_sha256(char *s[]){ft_printf("main sha256\n"); return 0;}
+const struct s_cmds g_cmds[] = {
+		{"md5", main_md5},
+		{"sha256", main_sha256},
+		{NULL, NULL},
+};
 
-int main(int argc, char *argv[])
+t_subcmd	*get_subcmd(char *requested_cmd)
 {
-	t_subcmd	*command;
+	const struct s_cmds	*cmds;
 
-	command = get_subcmd(argv[1]);
-	if (command)
-		command(argv);
+	if (requested_cmd == NULL)
+		return (NULL);
+	cmds = &g_cmds[0];
+	while (cmds->name)
+	{
+		if (strcmp(requested_cmd, cmds->name) == 0)
+			return (cmds->fn_ptr);
+		++cmds;
+	}
+	return (NULL);
 }

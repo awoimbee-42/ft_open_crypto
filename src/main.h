@@ -1,25 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   main.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/03/05 16:53:55 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/05 18:07:05 by awoimbee         ###   ########.fr       */
+/*   Created: 2020/03/05 18:03:59 by awoimbee          #+#    #+#             */
+/*   Updated: 2020/03/05 18:06:55 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "main.h"
+#ifndef MAIN_H
+# define MAIN_H
 
-int main_md5(char *s[]){ft_printf("main md5\n"); return 0;}
-int main_sha256(char *s[]){ft_printf("main sha256\n"); return 0;}
+#include <libft.h>
 
-int main(int argc, char *argv[])
+typedef int(t_subcmd)(char *[]);
+
+struct s_cmds
 {
-	t_subcmd	*command;
+	char		*name;
+	t_subcmd	*fn_ptr;
+};
 
-	command = get_subcmd(argv[1]);
-	if (command)
-		command(argv);
-}
+t_subcmd	*get_subcmd(char *requested_cmd);
+int main_md5(char *s[]);
+int main_sha256(char *s[]);
+
+
+#endif
