@@ -1,34 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.h                                             :+:      :+:    :+:   */
+/*   args.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/03/05 18:03:59 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/07 18:45:12 by awoimbee         ###   ########.fr       */
+/*   Created: 2020/03/07 17:56:27 by awoimbee          #+#    #+#             */
+/*   Updated: 2020/03/07 18:46:36 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MAIN_H
-# define MAIN_H
+#include "ft_md5.h"
 
-# include <stdbool.h>
-# include <stddef.h>
-# include <sys/types.h>
-
-typedef int(t_subcmd)(char *[]);
-
-struct s_cmds
-{
-	char		*name;
-	t_subcmd	*fn_ptr;
+const t_arg args[] = {
+	{"-p", NULL, 0, ft_md5}, // md5_stdin
+	{"-q", NULL, 0, NULL}, // enable_quiet w/ static var
+	{"-r", NULL, 0, NULL}, // set_reverse_output w/ static var
+	{"-s", NULL, 1, NULL}, // md5_str
+	{NULL, NULL, 0, NULL}, // md5_file -> special catch-all case
 };
-
-t_subcmd	*get_subcmd(char *requested_cmd);
-
-int main_md5(char *s[]);
-int main_sha256(char *s[]);
-
-
-#endif

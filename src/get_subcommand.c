@@ -6,11 +6,12 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/05 18:02:25 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/05 18:06:34 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/03/07 17:15:53 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "main.h"
+#include <libft/ft_str.h>
 
 const struct s_cmds g_cmds[] = {
 		{"md5", main_md5},
@@ -27,7 +28,7 @@ t_subcmd	*get_subcmd(char *requested_cmd)
 	cmds = &g_cmds[0];
 	while (cmds->name)
 	{
-		if (strcmp(requested_cmd, cmds->name) == 0)
+		if (ft_strcmp(requested_cmd, cmds->name) == 0)
 			return (cmds->fn_ptr);
 		++cmds;
 	}

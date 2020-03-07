@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/05 16:53:55 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/05 18:07:05 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/03/05 23:19:13 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,5 +21,5 @@ int main(int argc, char *argv[])
 
 	command = get_subcmd(argv[1]);
 	if (command)
-		command(argv);
+		command(++argv);
 }
