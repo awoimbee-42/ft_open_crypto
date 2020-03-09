@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 17:57:50 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/09 19:39:04 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/03/09 21:07:01 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ static uint32_t leftrotate(uint32_t x, uint32_t round)
 	uint32_t	*per_round_shift;
 	uint32_t	shift;
 
-	per_round_shift = (uint32_t[]){
+	per_round_shift = (uint32_t[64]){
 		7, 12, 17, 22,  7, 12, 17, 22,  7, 12, 17, 22,  7, 12, 17, 22,
 		5,  9, 14, 20,  5,  9, 14, 20,  5,  9, 14, 20,  5,  9, 14, 20,
 		4, 11, 16, 23,  4, 11, 16, 23,  4, 11, 16, 23,  4, 11, 16, 23,
@@ -97,19 +97,19 @@ void		md5_chunk(void *chunk)
 {
 	uint32_t	*chunk32;
 	uint32_t	*h_save;
-	int			hash[4];
+	uint32_t	hash[4];
 	int			i;
 
 	chunk32 = chunk;
 	h_save = get_current_md5();
-	ft_memcpy(hash, h_save, 16);
+	ft_memcpy(hash, h_save, 4 * 4);
 	i = -1;
 	while (++i < 64)
 	{
-		int F, g;
+		uint32_t F, g;
 		if (i < 16)
 		{
-			F = (hash[1] & hash[2])|((~hash[1])&hash[3]);
+			F = (hash[1] & hash[2]) | ((~hash[1]) & hash[3]);
 			g = i;
 		}
 		else if (i < 32)
@@ -120,14 +120,14 @@ void		md5_chunk(void *chunk)
 		else if (i < 48)
 		{
 			F = hash[1] ^ hash[2] ^ hash[3];
-			g = (3*i + 5) % 16;
+			g = (3 * i + 5) % 16;
 		}
-		else if (i < 64)
+		else
 		{
 			F = hash[2] ^ (hash[1] | (~hash[3]));
-			g = (7*i) % 16;
+			g = (7 * i) % 16;
 		}
-		F = F + hash[0] + constants[i] + chunk32[g];
+		F += hash[0] + constants[i] + chunk32[g];
 		hash[0] = hash[3];
 		hash[3] = hash[2];
 		hash[2] = hash[1];

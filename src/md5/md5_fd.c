@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 17:55:32 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/09 16:33:38 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/03/09 21:22:48 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,12 @@ void	md5_stdin()
 
 void	md5_fd(int filedesc)
 {
-	char	input[64];
-	ssize_t	nb;
-	size_t	input_size;
-	int		one_not_written;
+	char		input[64];
+	ssize_t		nb;
+	uint64_t	input_size;
+	int			one_not_written;
 
+	ft_bzero(input, 64);
 	input_size = 0;
 	one_not_written = 1;
 	while (1)
@@ -53,21 +54,18 @@ void	md5_fd(int filedesc)
 		md5_chunk(input);
 	}
 	ft_assert(nb != -1, "Could not read from file descriptor");
-	if (nb >= 55) { // 56??
+	if (nb >= 56) { // 55??
 		one_not_written = 0;
 		ft_bzero(&input[nb], 64 - nb);
 		input[nb] |= 1 << 7;
 		md5_chunk(input);
 		nb = 0;
 	}
-	// parse last 448 bits + the 64bits filesize
 
-	ft_bzero(&input[nb], 64 - 8 - nb); // no need to bzero last 64 bits
+	ft_bzero(&input[nb], 64 - 8 - nb);
 	input[nb] |= one_not_written ? 1 << 7 : 0;
-	// ft_memcpy(&input[63-8], &input_size, 8);
-	*((uint64_t*)&input[63 - 8]) = (uint64_t)input_size;
+	*((uint64_t*)&input[64 - 8]) = input_size * 8;
 	md5_chunk(input);
-
 	char *s = md5_get_digest();
 	ft_printf("%s\n", s);
 	free(s);
