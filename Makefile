@@ -6,7 +6,7 @@
 #    By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/26 22:06:19 by marvin            #+#    #+#              #
-#    Updated: 2020/03/05 17:57:14 by awoimbee         ###   ########.fr        #
+#    Updated: 2020/03/09 15:17:36 by awoimbee         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,12 +16,12 @@
 
 NAME := ft_ssl
 
-CFLAGS ?= -g3 -Wall -Wextra #-Werror -fno-builtin
+CFLAGS := -g3 -Wall -Wextra #-Werror -fno-builtin
 
 
 SRC_NAME = $(shell cd src && find . -type f -name "*.c")
 
-SRC_SUBFOLDERS =
+SRC_SUBFOLDERS = $(shell cd src && find . -type d)
 
 BUILD_FOLDER =	build
 

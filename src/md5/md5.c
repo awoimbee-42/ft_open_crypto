@@ -6,12 +6,15 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 17:57:50 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/07 18:43:25 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/03/09 19:39:04 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdint.h>
 #include <libft/ft_mem.h>
+#include <libft/ft_prtf.h>
+#include <stdlib.h>
+#include <libft/ft_exit.h>
 
 /* binary integer part of the sines of integers (Radians) as constants */
 static const uint32_t	constants[64] = {
@@ -33,7 +36,24 @@ static const uint32_t	constants[64] = {
 	0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391,
 };
 
-static int		*get_current_md5()
+static uint32_t leftrotate(uint32_t x, uint32_t round)
+{
+	uint32_t	*per_round_shift;
+	uint32_t	shift;
+
+	per_round_shift = (uint32_t[]){
+		7, 12, 17, 22,  7, 12, 17, 22,  7, 12, 17, 22,  7, 12, 17, 22,
+		5,  9, 14, 20,  5,  9, 14, 20,  5,  9, 14, 20,  5,  9, 14, 20,
+		4, 11, 16, 23,  4, 11, 16, 23,  4, 11, 16, 23,  4, 11, 16, 23,
+		6, 10, 15, 21,  6, 10, 15, 21,  6, 10, 15, 21,  6, 10, 15, 21,
+	};
+	shift = per_round_shift[round];
+	return (
+		(x << shift) | (x >> (32 - shift))
+	);
+}
+
+static uint32_t	*get_current_md5()
 {
 	static uint32_t	md5[4] = {
 		0x67452301,
@@ -47,26 +67,40 @@ static int		*get_current_md5()
 
 char		*md5_get_digest()
 {
-	char	*digest;
+	const char	*str_base;
+	char		*digest[2];
+	uint8_t		*md5;
 
-	digest = malloc(17);
-	digest[16] = 0;
-	ft_memcpy(digest, get_current_md5(), 16);
+	str_base = "0123456789abcdef";
+	md5 = (uint8_t*)get_current_md5();
+	ft_assertp_safe(digest[0] = malloc(33), "malloc failed", NULL);
+	ft_memset(digest[0], '0', 32);
+	digest[0][32] = '\0';
+	digest[1] = digest[0];
+	while (*digest[1])
+	{
+		int v = *(md5++);
+		digest[1][1] = str_base[v % 16];
+		v /= 16;
+		digest[1][0] = str_base[v % 16];
+		digest[1] += 2;
+	}
 	get_current_md5()[0] = 0x67452301;
 	get_current_md5()[1] = 0xefcdab89;
 	get_current_md5()[2] = 0x98badcfe;
 	get_current_md5()[3] = 0x10325476;
-
-	return digest;
+	return digest[0];
 }
 
 // first, dumb implementation
-void		md5_chunk(uint32_t *chunk)
+void		md5_chunk(void *chunk)
 {
+	uint32_t	*chunk32;
 	uint32_t	*h_save;
 	int			hash[4];
 	int			i;
 
+	chunk32 = chunk;
 	h_save = get_current_md5();
 	ft_memcpy(hash, h_save, 16);
 	i = -1;
@@ -93,7 +127,7 @@ void		md5_chunk(uint32_t *chunk)
 			F = hash[2] ^ (hash[1] | (~hash[3]));
 			g = (7*i) % 16;
 		}
-		F = F + hash[0] + constants[i] + chunk[g];
+		F = F + hash[0] + constants[i] + chunk32[g];
 		hash[0] = hash[3];
 		hash[3] = hash[2];
 		hash[2] = hash[1];
@@ -103,21 +137,4 @@ void		md5_chunk(uint32_t *chunk)
 	h_save[1] += hash[1];
 	h_save[2] += hash[2];
 	h_save[3] += hash[3];
-}
-
-static uint32_t letrotate(uint32_t x, uint32_t round)
-{
-	uint32_t	*per_round_shift;
-	uint32_t	shift;
-
-	per_round_shift = (uint32_t[]){
-		7, 12, 17, 22,  7, 12, 17, 22,  7, 12, 17, 22,  7, 12, 17, 22,
-		5,  9, 14, 20,  5,  9, 14, 20,  5,  9, 14, 20,  5,  9, 14, 20,
-		4, 11, 16, 23,  4, 11, 16, 23,  4, 11, 16, 23,  4, 11, 16, 23,
-		6, 10, 15, 21,  6, 10, 15, 21,  6, 10, 15, 21,  6, 10, 15, 21,
-	};
-	shift = per_round_shift[round];
-	return (
-		(x << shift) | (x >> (32 - shift))
-	);
 }
