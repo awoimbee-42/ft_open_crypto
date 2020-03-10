@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 17:56:27 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/10 00:57:41 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/03/10 02:20:08 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,31 +14,56 @@
 #include "ft_md5.h"
 #include <libft/ft_exit.h>
 
+void	set_reverse(t_global *g, void *nothing);
+void	set_quiet(t_global *g, void *nothing);
+
 static const t_arg g_args[4] = {
 	{'p', 0, md5_stdin}, // md5_stdin
-	{'q', 0, NULL}, // enable_quiet w/ static var
-	{'r', 0, NULL}, // set_reverse_output w/ static var
-	{'s', 1, NULL}, // md5_str
+	{'q', 0, set_quiet}, // enable_quiet w/ static var
+	{'r', 0, set_reverse}, // set_reverse_output w/ static var
+	{'s', 1, md5_str}, // md5_str
 };
 
-static void	arg_callback(t_global *g, char *arg)
+void	set_quiet(t_global *g, void *nothing)
+{
+	(void)nothing;
+	g->quiet = true;
+}
+
+void	set_reverse(t_global *g, void *nothing)
+{
+	(void)nothing;
+	g->reverse = true;
+}
+
+static void	arg_callback(t_global *g, char ***argv)
 {
 	const t_arg	*a;
 	const t_arg	*end;
+	const char	*arg;
 
+	arg = **argv;
 	if (*arg != '-')
 	{
 		md5_file(g, arg);
 		return;
 	}
-	end = &g_args[4]; // FUCK YOU Warray-bounds FFS KYS ASKLFF
+	end = &g_args[4];
 	while (*(++arg))
 	{
 		a = g_args;
 		while (a <= end && a->short_name != *arg)
 			++a;
-		ft_assert(a <= end, "Invalid argument: %c", *arg);
-		a->f(g, NULL);
+		ft_assert(a <= end, "Invalid argument: %s", **argv);
+		if (a->take_value == 0)
+			a->f(g, NULL);
+		else
+		{
+			ft_assert(*++arg == '\0', "Invalid argument: %s", **argv);
+			++*argv;
+			a->f(g, **argv);
+			return;
+		}
 	}
 }
 
@@ -48,7 +73,7 @@ void		process_args(t_global *g, char **argv)
 		md5_stdin(g, NULL);
 	while (*argv)
 	{
-		arg_callback(g, *argv);
+		arg_callback(g, &argv);
 		++argv;
 	}
 }

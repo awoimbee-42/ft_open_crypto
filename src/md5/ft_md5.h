@@ -6,16 +6,21 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 18:45:25 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/10 00:52:41 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/03/10 02:20:46 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_MD5_H
 # define FT_MD5_H
 
-#include <stdbool.h>
-#include <inttypes.h>
+# define READ_BUF_SIZE 1024 * 1024
+# if READ_BUF_SIZE % 64 != 0
+#  error "pute"
+# endif
 
+# include <sys/types.h>
+# include <stdbool.h>
+# include <inttypes.h>
 
 typedef struct	s_global
 {
@@ -41,6 +46,11 @@ typedef struct	s_arg
 	t_arg_callback	f;
 }				t_arg;
 
+typedef struct	s_fcontent
+{
+	size_t			len;
+	char			dat[READ_BUF_SIZE];
+}				t_fcontent;
 
 /* args.c */
 void		process_args(t_global *g, char **argv);
@@ -51,7 +61,8 @@ char		*ft_md5(char **argv);
 /* md5_fd.c */
 void		md5_fd(t_global *g, int filedesc, const char *fname);
 void		md5_stdin(t_global *g, void *fuck_c);
-void		md5_file(t_global *g, char *fname);
+void		md5_file(t_global *g, const char *fname);
+void		md5_str(t_global *g, void *str);
 
 /* md5.c */
 char		*md5_get_digest(t_global *g);

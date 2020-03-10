@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 17:55:32 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/10 01:04:46 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/03/10 02:20:28 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 #include <errno.h>
 #include <string.h>
 
-void	md5_file(t_global *g, char *fname)
+void	md5_file(t_global *g, const char *fname)
 {
 	int		fd;
 
@@ -41,7 +41,8 @@ void	md5_stdin(t_global *g, void *fuck_c)
 	md5_fd(g, STDIN_FILENO, "stdin");
 }
 
-void	padd_n_proc_chunk(t_global *g, char in[64], size_t len, size_t tot_len)
+
+static void	padd_n_proc_chunk(t_global *g, char in[64], size_t len, size_t tot_len)
 {
 	bool	one_not_written;
 
@@ -59,30 +60,70 @@ void	padd_n_proc_chunk(t_global *g, char in[64], size_t len, size_t tot_len)
 	md5_chunk(g, in);
 }
 
-void	md5_fd(t_global *g, int filedesc, const char *fname)
+static int	read_file(t_global *g, int fd, const char *f, t_fcontent *content)
 {
-	char		input[64];
-	ssize_t		nb;
-	uint64_t	input_size;
-
-	ft_bzero(input, 64);
-	input_size = 0;
-	while (1)
-	{
-		nb = read(filedesc, input, 64);
-		input_size += nb;
-		if (nb != 64)
-			break;
-		md5_chunk(g, input);
-	}
-	if (nb == -1)
+	content->len = read(fd, content->dat, READ_BUF_SIZE);
+	if ((ssize_t)content->len == -1)
 	{
 		unset_hashing(g);
-		ft_fprintf(2, "Could not read %s (%s)", fname, strerror(errno));
+		ft_fprintf(2, "Could not read file %s (%s)", f, strerror(errno));
+		return (1);
+	}
+	return (0);
+}
+
+void	md5_fd(t_global *g, int filedesc, const char *fname)
+{
+	t_fcontent	content;
+	size_t		idx;
+	uint64_t	tot_len;
+
+	tot_len = 0;
+	while (!read_file(g, filedesc, fname, &content))
+	{
+		tot_len += content.len;
+		idx = 0;
+		while (idx + 64 <= content.len)
+		{
+			md5_chunk(g, &content.dat[idx]);
+			idx += 64;
+		}
+		if (!content.len || idx != content.len)
+		{
+			padd_n_proc_chunk(g, &content.dat[idx], content.len % 64, tot_len);
+			char *s = md5_get_digest(g);
+			ft_printf("%s\n", s);
+			free(s);
+			return;
+		}
+	}
+}
+
+
+#include <libft/ft_str.h>
+
+void	md5_str(t_global *g, void *str)
+{
+	char		buf[64];
+	char		*s;
+	size_t		len;
+	size_t		idx;
+
+	s = str;
+	len = ft_strlen(s);
+	idx = 0;
+	while (idx + 64 <= len)
+	{
+		md5_chunk(g, &s[idx]);
+		idx += 64;
+	}
+	if (!len || idx != len)
+	{
+		ft_memcpy(buf, &s[idx], len % 64);
+		padd_n_proc_chunk(g, buf, len % 64, len);
+		char *s = md5_get_digest(g);
+		ft_printf("%s\n", s);
+		free(s);
 		return;
 	}
-	padd_n_proc_chunk(g, input, nb, input_size);
-	char *s = md5_get_digest(g);
-	ft_printf("%s\n", s);
-	free(s);
 }
