@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 17:57:50 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/10 17:37:39 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/03/10 17:45:44 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ static void	set_hashing(t_global *g)
 	g->hashes[3] = 0x10325476;
 }
 
-void		unset_hashing(t_global *g)
+void		md5_unset_hashing(t_global *g)
 {
 	ft_bzero(g->hashes, sizeof(g->hashes));
 	g->hashing = false;
@@ -91,7 +91,7 @@ char		*md5_get_digest(t_global *g)
 		digest[1][0] = str_base[v % 16];
 		digest[1] += 2;
 	}
-	unset_hashing(g);
+	md5_unset_hashing(g);
 	return digest[0];
 }
 
@@ -115,7 +115,6 @@ void		md5_chunk(t_global *g, void *chunk)
 	set_hashing(g);
 	ft_memcpy(h, g->hashes, 4 * 4);
 	i = -1;
-	uint32_t F, gg;
 	while (++i < 16)
 		hash_rotation(h, (h[1] & h[2]) | ((~h[1]) & h[3]), i, c32[i]);
 	--i;

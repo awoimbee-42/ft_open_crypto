@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 17:55:32 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/10 17:11:40 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/03/10 17:45:03 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 **	stdin 1
 **	str   2
 */
-void		print_md5(t_global *g, int type, const char *fname)
+void		md5_print(t_global *g, int type, const char *fname)
 {
 	char	*digest;
 
@@ -43,7 +43,7 @@ void		print_md5(t_global *g, int type, const char *fname)
 	free(digest);
 }
 
-void		pad_n_proc_chunk(t_global *g, char *in, size_t len, size_t tot_len)
+void		md5_pad_n_proc_c(t_global *g, char *in, size_t len, size_t tot_len)
 {
 	bool	one_not_written;
 
@@ -66,7 +66,7 @@ static int	read_file(t_global *g, int fd, const char *f, t_fcontent *content)
 	content->len = read(fd, content->dat, READ_BUF_SIZE);
 	if ((ssize_t)content->len == -1)
 	{
-		unset_hashing(g);
+		md5_unset_hashing(g);
 		ft_fprintf(2, "Could not read file %s (%s)\n", f, strerror(errno));
 		return (1);
 	}
@@ -95,8 +95,8 @@ void		md5_fd(t_global *g, int filedesc, const char *fname)
 		{
 			if (filedesc == STDIN_FILENO && fname != NO_ARGS)
 				write(1, "\n", 1);
-			pad_n_proc_chunk(g, &content.dat[idx], content.len % 64, tot_len);
-			print_md5(g, filedesc == STDIN_FILENO, fname);
+			md5_pad_n_proc_c(g, &content.dat[idx], content.len % 64, tot_len);
+			md5_print(g, filedesc == STDIN_FILENO, fname);
 			return;
 		}
 	}

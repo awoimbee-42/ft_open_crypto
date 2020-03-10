@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/10 17:05:22 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/10 17:10:49 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/03/10 17:44:47 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,8 @@ void	md5_str(t_global *g, void *str)
 	if (!len || idx != len)
 	{
 		ft_memcpy(buf, &s[idx], len % 64);
-		pad_n_proc_chunk(g, buf, len % 64, len);
-		print_md5(g, 2, str);
+		md5_pad_n_proc_c(g, buf, len % 64, len);
+		md5_print(g, 2, str);
 		return;
 	}
 }

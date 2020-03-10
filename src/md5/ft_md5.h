@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 18:45:25 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/10 17:09:48 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/03/10 17:45:28 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
 
 typedef struct	s_global
 {
-	uint32_t		hashes[8];
+	uint32_t		hashes[4];
 	bool			hashing;
 	bool			quiet;
 	bool			reverse;
@@ -55,15 +55,15 @@ typedef struct	s_fcontent
 }				t_fcontent;
 
 /* args.c */
-void		process_args(t_global *g, char **argv);
+void		md5_proc_args(t_global *g, char **argv);
 
 /* main.c */
 char		*ft_md5(char **argv);
 
 /* md5_fd.c */
 void		md5_fd(t_global *g, int filedesc, const char *fname);
-void		print_md5(t_global *g, int type, const char *fname);
-void		pad_n_proc_chunk(t_global *g, char *in, size_t len, size_t tot_len);
+void		md5_print(t_global *g, int type, const char *fname);
+void		md5_pad_n_proc_c(t_global *g, char *in, size_t len, size_t tot_len);
 
 /* callbacks.c */
 void		md5_stdin(t_global *g, void *fuck_c);
@@ -73,6 +73,6 @@ void		md5_str(t_global *g, void *str);
 /* md5.c */
 char		*md5_get_digest(t_global *g);
 void		md5_chunk(t_global *g, void *chunk);
-void		unset_hashing(t_global *g);
+void		md5_unset_hashing(t_global *g);
 
 #endif

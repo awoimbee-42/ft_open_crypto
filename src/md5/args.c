@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 17:56:27 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/10 12:20:15 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/03/10 17:46:39 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 #include "ft_md5.h"
 #include <libft/ft_exit.h>
 
-void	set_reverse(t_global *g, void *nothing);
-void	set_quiet(t_global *g, void *nothing);
+static void	set_reverse(t_global *g, void *nothing);
+static void	set_quiet(t_global *g, void *nothing);
 
 static const t_arg g_args[4] = {
 	{'p', 0, md5_stdin}, // md5_stdin
@@ -24,13 +24,13 @@ static const t_arg g_args[4] = {
 	{'s', 1, md5_str}, // md5_str
 };
 
-void	set_quiet(t_global *g, void *nothing)
+static void	set_quiet(t_global *g, void *nothing)
 {
 	(void)nothing;
 	g->quiet = true;
 }
 
-void	set_reverse(t_global *g, void *nothing)
+static void	set_reverse(t_global *g, void *nothing)
 {
 	(void)nothing;
 	g->reverse = true;
@@ -67,7 +67,7 @@ static void	arg_callback(t_global *g, char ***argv)
 	}
 }
 
-void		process_args(t_global *g, char **argv)
+void		md5_proc_args(t_global *g, char **argv)
 {
 	if (!*argv)
 		md5_stdin(g, NO_ARGS);

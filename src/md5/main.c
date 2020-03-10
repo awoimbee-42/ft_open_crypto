@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/05 23:20:20 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/10 00:53:52 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/03/10 17:45:26 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int		main_md5(char **argv)
 	t_global	globals;
 
 	ft_bzero(&globals, sizeof(globals));
-	process_args(&globals, argv);
+	md5_proc_args(&globals, argv);
 	return 0;
 }
 
