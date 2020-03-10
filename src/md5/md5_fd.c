@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 17:55:32 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/09 21:22:48 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/03/10 01:04:46 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,52 +21,68 @@
 #include <errno.h>
 #include <string.h>
 
-void	md5_file(char *fname)
+void	md5_file(t_global *g, char *fname)
 {
 	int		fd;
 
 	fd = open(fname, O_RDONLY);
-	ft_assert(fd > 0, "Could not open %s (%s)\n", fname, strerror(errno));
-	md5_fd(fd);
+	if (fd == -1)
+	{
+		ft_fprintf(2, "Could not open %s (%s)", fname, strerror(errno));
+		return;
+	}
+	md5_fd(g, fd, fname);
+	ft_assert(close(fd) == 0, "Could not close file (%s)", fname);
 }
 
-void	md5_stdin()
+void	md5_stdin(t_global *g, void *fuck_c)
 {
-	md5_fd(STDIN_FILENO);
+	(void)fuck_c;
+	md5_fd(g, STDIN_FILENO, "stdin");
 }
 
-void	md5_fd(int filedesc)
+void	padd_n_proc_chunk(t_global *g, char in[64], size_t len, size_t tot_len)
+{
+	bool	one_not_written;
+
+	one_not_written = 1;
+	if (len >= 56) {
+		one_not_written = 0;
+		ft_bzero(&in[len], 64 - len);
+		in[len] |= 1 << 7;
+		md5_chunk(g, in);
+		len = 0;
+	}
+	ft_bzero(&in[len], 64 - 8 - len);
+	in[len] |= one_not_written ? 1 << 7 : 0;
+	*((uint64_t*)&in[64 - 8]) = tot_len * 8;
+	md5_chunk(g, in);
+}
+
+void	md5_fd(t_global *g, int filedesc, const char *fname)
 {
 	char		input[64];
 	ssize_t		nb;
 	uint64_t	input_size;
-	int			one_not_written;
 
 	ft_bzero(input, 64);
 	input_size = 0;
-	one_not_written = 1;
 	while (1)
 	{
 		nb = read(filedesc, input, 64);
 		input_size += nb;
 		if (nb != 64)
 			break;
-		md5_chunk(input);
+		md5_chunk(g, input);
 	}
-	ft_assert(nb != -1, "Could not read from file descriptor");
-	if (nb >= 56) { // 55??
-		one_not_written = 0;
-		ft_bzero(&input[nb], 64 - nb);
-		input[nb] |= 1 << 7;
-		md5_chunk(input);
-		nb = 0;
+	if (nb == -1)
+	{
+		unset_hashing(g);
+		ft_fprintf(2, "Could not read %s (%s)", fname, strerror(errno));
+		return;
 	}
-
-	ft_bzero(&input[nb], 64 - 8 - nb);
-	input[nb] |= one_not_written ? 1 << 7 : 0;
-	*((uint64_t*)&input[64 - 8]) = input_size * 8;
-	md5_chunk(input);
-	char *s = md5_get_digest();
+	padd_n_proc_chunk(g, input, nb, input_size);
+	char *s = md5_get_digest(g);
 	ft_printf("%s\n", s);
 	free(s);
 }

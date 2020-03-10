@@ -6,10 +6,11 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 17:57:50 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/09 21:07:01 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/03/10 00:54:09 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "ft_md5.h"
 #include <stdint.h>
 #include <libft/ft_mem.h>
 #include <libft/ft_prtf.h>
@@ -36,43 +37,48 @@ static const uint32_t	constants[64] = {
 	0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391,
 };
 
+static const uint32_t	g_round_shift[64] = {
+	7, 12, 17, 22,  7, 12, 17, 22,  7, 12, 17, 22,  7, 12, 17, 22,
+	5,  9, 14, 20,  5,  9, 14, 20,  5,  9, 14, 20,  5,  9, 14, 20,
+	4, 11, 16, 23,  4, 11, 16, 23,  4, 11, 16, 23,  4, 11, 16, 23,
+	6, 10, 15, 21,  6, 10, 15, 21,  6, 10, 15, 21,  6, 10, 15, 21,
+};
+
 static uint32_t leftrotate(uint32_t x, uint32_t round)
 {
-	uint32_t	*per_round_shift;
 	uint32_t	shift;
 
-	per_round_shift = (uint32_t[64]){
-		7, 12, 17, 22,  7, 12, 17, 22,  7, 12, 17, 22,  7, 12, 17, 22,
-		5,  9, 14, 20,  5,  9, 14, 20,  5,  9, 14, 20,  5,  9, 14, 20,
-		4, 11, 16, 23,  4, 11, 16, 23,  4, 11, 16, 23,  4, 11, 16, 23,
-		6, 10, 15, 21,  6, 10, 15, 21,  6, 10, 15, 21,  6, 10, 15, 21,
-	};
-	shift = per_round_shift[round];
+	shift = g_round_shift[round];
 	return (
 		(x << shift) | (x >> (32 - shift))
 	);
 }
 
-static uint32_t	*get_current_md5()
+static void	set_hashing(t_global *g)
 {
-	static uint32_t	md5[4] = {
-		0x67452301,
-		0xefcdab89,
-		0x98badcfe,
-		0x10325476,
-	};
-
-	return (&md5[0]);
+	if (g->hashing)
+		return;
+	g->hashing = true;
+	g->hashes[0] = 0x67452301;
+	g->hashes[1] = 0xefcdab89;
+	g->hashes[2] = 0x98badcfe;
+	g->hashes[3] = 0x10325476;
 }
 
-char		*md5_get_digest()
+void		unset_hashing(t_global *g)
+{
+	ft_bzero(g->hashes, sizeof(g->hashes));
+	g->hashing = false;
+}
+
+char		*md5_get_digest(t_global *g)
 {
 	const char	*str_base;
 	char		*digest[2];
 	uint8_t		*md5;
 
 	str_base = "0123456789abcdef";
-	md5 = (uint8_t*)get_current_md5();
+	md5 = (uint8_t*)g->hashes;
 	ft_assertp_safe(digest[0] = malloc(33), "malloc failed", NULL);
 	ft_memset(digest[0], '0', 32);
 	digest[0][32] = '\0';
@@ -85,24 +91,20 @@ char		*md5_get_digest()
 		digest[1][0] = str_base[v % 16];
 		digest[1] += 2;
 	}
-	get_current_md5()[0] = 0x67452301;
-	get_current_md5()[1] = 0xefcdab89;
-	get_current_md5()[2] = 0x98badcfe;
-	get_current_md5()[3] = 0x10325476;
+	unset_hashing(g);
 	return digest[0];
 }
 
 // first, dumb implementation
-void		md5_chunk(void *chunk)
+void		md5_chunk(t_global *g, void *chunk)
 {
 	uint32_t	*chunk32;
-	uint32_t	*h_save;
 	uint32_t	hash[4];
 	int			i;
 
 	chunk32 = chunk;
-	h_save = get_current_md5();
-	ft_memcpy(hash, h_save, 4 * 4);
+	set_hashing(g);
+	ft_memcpy(hash, g->hashes, 4 * 4);
 	i = -1;
 	while (++i < 64)
 	{
@@ -133,8 +135,8 @@ void		md5_chunk(void *chunk)
 		hash[2] = hash[1];
 		hash[1] += leftrotate(F, i);
 	}
-	h_save[0] += hash[0];
-	h_save[1] += hash[1];
-	h_save[2] += hash[2];
-	h_save[3] += hash[3];
+	g->hashes[0] += hash[0];
+	g->hashes[1] += hash[1];
+	g->hashes[2] += hash[2];
+	g->hashes[3] += hash[3];
 }
