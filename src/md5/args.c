@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 17:56:27 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/10 02:20:08 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/03/10 12:20:15 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ static void	arg_callback(t_global *g, char ***argv)
 void		process_args(t_global *g, char **argv)
 {
 	if (!*argv)
-		md5_stdin(g, NULL);
+		md5_stdin(g, NO_ARGS);
 	while (*argv)
 	{
 		arg_callback(g, &argv);

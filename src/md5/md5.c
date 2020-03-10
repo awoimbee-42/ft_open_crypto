@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 17:57:50 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/10 01:53:25 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/03/10 17:37:39 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,57 +96,39 @@ char		*md5_get_digest(t_global *g)
 }
 
 
-static void	hash_rotation(uint32_t hash[], uint32_t f, uint64_t i, uint32_t chunkg)
+static void	hash_rotation(uint32_t h[], uint32_t f, uint64_t i, uint32_t data)
 {
-	f += hash[0] + constants[i] + chunkg;
-	hash[0] = hash[3];
-	hash[3] = hash[2];
-	hash[2] = hash[1];
-	hash[1] += leftrotate(f, i);
+	f += h[0] + constants[i] + data;
+	h[0] = h[3];
+	h[3] = h[2];
+	h[2] = h[1];
+	h[1] += leftrotate(f, i);
 }
 
-// first, dumb implementation
 void		md5_chunk(t_global *g, void *chunk)
 {
-	uint32_t	*chunk32;
-	uint32_t	hash[4];
+	uint32_t	*c32;
+	uint32_t	h[4];
 	int			i;
 
-	chunk32 = chunk;
+	c32 = chunk;
 	set_hashing(g);
-	ft_memcpy(hash, g->hashes, 4 * 4);
-	i = 0;
+	ft_memcpy(h, g->hashes, 4 * 4);
+	i = -1;
 	uint32_t F, gg;
-	while (i < 16)
-	{
-		F = (hash[1] & hash[2]) | ((~hash[1]) & hash[3]);
-		gg = i;
-		hash_rotation(hash, F, i, chunk32[gg]);
-		++i;
-	}
-	while (i < 32)
-	{
-		F = (hash[3] & hash[1]) | ((~hash[3]) & hash[2]);
-		gg = (5 * i + 1) % 16;
-		hash_rotation(hash, F, i, chunk32[gg]);
-		++i;
-	}
-	while (i < 48)
-	{
-		F = hash[1] ^ hash[2] ^ hash[3];
-		gg = (3 * i + 5) % 16;
-		hash_rotation(hash, F, i, chunk32[gg]);
-		++i;
-	}
-	while (i < 64)
-	{
-		F = hash[2] ^ (hash[1] | (~hash[3]));
-		gg = (7 * i) % 16;
-		hash_rotation(hash, F, i, chunk32[gg]);
-		++i;
-	}
-	g->hashes[0] += hash[0];
-	g->hashes[1] += hash[1];
-	g->hashes[2] += hash[2];
-	g->hashes[3] += hash[3];
+	while (++i < 16)
+		hash_rotation(h, (h[1] & h[2]) | ((~h[1]) & h[3]), i, c32[i]);
+	--i;
+	while (++i < 32)
+		hash_rotation(h, (h[3] & h[1]) | ((~h[3]) & h[2]), i, c32[(5 * i + 1) % 16]);
+	--i;
+	while (++i < 48)
+		hash_rotation(h, h[1] ^ h[2] ^ h[3], i, c32[(3 * i + 5) % 16]);
+	--i;
+	while (++i < 64)
+		hash_rotation(h, h[2] ^ (h[1] | (~h[3])), i, c32[(7 * i) % 16]);
+	g->hashes[0] += h[0];
+	g->hashes[1] += h[1];
+	g->hashes[2] += h[2];
+	g->hashes[3] += h[3];
 }

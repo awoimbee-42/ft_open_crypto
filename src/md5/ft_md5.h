@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 18:45:25 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/10 02:20:46 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/03/10 17:09:48 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 # if READ_BUF_SIZE % 64 != 0
 #  error "pute"
 # endif
+
+# define NO_ARGS (void*)1
 
 # include <sys/types.h>
 # include <stdbool.h>
@@ -60,6 +62,10 @@ char		*ft_md5(char **argv);
 
 /* md5_fd.c */
 void		md5_fd(t_global *g, int filedesc, const char *fname);
+void		print_md5(t_global *g, int type, const char *fname);
+void		pad_n_proc_chunk(t_global *g, char *in, size_t len, size_t tot_len);
+
+/* callbacks.c */
 void		md5_stdin(t_global *g, void *fuck_c);
 void		md5_file(t_global *g, const char *fname);
 void		md5_str(t_global *g, void *str);
