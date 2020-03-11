@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 17:55:32 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/11 19:05:10 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/03/11 19:58:48 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,11 @@ void		sha256_print(t_global *g, int type, const char *fname)
 	else if (type == 0 && g->reverse)
 		ft_printf("%s %s\n", digest, fname);
 	else if (type == 0)
-		ft_printf("MD5 (%s) = %s\n", fname, digest);
+		ft_printf("SHA256 (%s) = %s\n", fname, digest);
 	else if (type == 2 && g->reverse)
 		ft_printf("%s \"%s\"\n", digest, fname);
 	else if (type == 2)
-		ft_printf("MD5 (\"%s\") = %s\n", fname, digest);
+		ft_printf("SHA256 (\"%s\") = %s\n", fname, digest);
 	free(digest);
 }
 
@@ -96,8 +96,6 @@ void		sha256_fd(t_global *g, int filedesc, const char *fname)
 		}
 		if (!content.len || idx != content.len)
 		{
-			if (filedesc == STDIN_FILENO && fname != (void*)NO_ARGS)
-				write(1, "\n", 1);
 			sha256_pad_n_proc(g, &content.dat[idx], content.len % 64, tot_len);
 			sha256_print(g, filedesc == STDIN_FILENO, fname);
 			return ;

@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 17:55:32 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/11 19:02:16 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/03/11 19:59:02 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,8 +95,6 @@ void		md5_fd(t_global *g, int filedesc, const char *fname)
 		}
 		if (!content.len || idx != content.len)
 		{
-			if (filedesc == STDIN_FILENO && fname != (void*)NO_ARGS)
-				write(1, "\n", 1);
 			md5_pad_n_proc(g, &content.dat[idx], content.len % 64, tot_len);
 			md5_print(g, filedesc == STDIN_FILENO, fname);
 			return ;

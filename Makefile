@@ -6,7 +6,7 @@
 #    By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/26 22:06:19 by marvin            #+#    #+#              #
-#    Updated: 2020/03/11 19:00:34 by awoimbee         ###   ########.fr        #
+#    Updated: 2020/03/11 19:48:51 by awoimbee         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@
 
 NAME := ft_ssl
 
-CFLAGS := -g3 -Wall -Wextra #-Werror -fno-builtin
+CFLAGS := -Ofast -Wall -Wextra #-Werror -fno-builtin
 
 
 SRC_NAME = $(shell cd src && find . -type f -name "*.c")
