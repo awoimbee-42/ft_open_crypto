@@ -6,74 +6,78 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 17:56:27 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/10 17:46:39 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/03/11 09:34:36 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stddef.h>
 #include "ft_md5.h"
 #include <libft/ft_exit.h>
+#include <libft/ft_str.h>
 
 static void	set_reverse(t_global *g, void *nothing);
 static void	set_quiet(t_global *g, void *nothing);
 
 static const t_arg g_args[4] = {
-	{'p', 0, md5_stdin}, // md5_stdin
-	{'q', 0, set_quiet}, // enable_quiet w/ static var
-	{'r', 0, set_reverse}, // set_reverse_output w/ static var
-	{'s', 1, md5_str}, // md5_str
+	{'p', 0, md5_stdin},
+	{'q', 0, set_quiet},
+	{'r', 0, set_reverse},
+	{'s', 1, md5_str},
 };
 
-static void	set_quiet(t_global *g, void *nothing)
+static void			set_quiet(t_global *g, void *nothing)
 {
 	(void)nothing;
 	g->quiet = true;
 }
 
-static void	set_reverse(t_global *g, void *nothing)
+static void			set_reverse(t_global *g, void *nothing)
 {
 	(void)nothing;
 	g->reverse = true;
 }
 
-static void	arg_callback(t_global *g, char ***argv)
+static uintptr_t	match_arg(t_global *g, char * const * const arg)
 {
 	const t_arg	*a;
-	const t_arg	*end;
-	const char	*arg;
+	char		*s;
 
-	arg = **argv;
-	if (*arg != '-')
-	{
-		md5_file(g, arg);
-		return;
-	}
-	end = &g_args[4];
-	while (*(++arg))
+	s = *arg;
+	if (s[0] == '\0')
+		return 0;
+	while (*(++s))
 	{
 		a = g_args;
-		while (a <= end && a->short_name != *arg)
+		while (a <= &g_args[4] && a->short_name != *s)
 			++a;
-		ft_assert(a <= end, "Invalid argument: %s", **argv);
+		ft_assert(a <= &g_args[4], "Invalid argument: %s", *arg);
 		if (a->take_value == 0)
 			a->f(g, NULL);
 		else
 		{
-			ft_assert(*++arg == '\0', "Invalid argument: %s", **argv);
-			++*argv;
-			a->f(g, **argv);
-			return;
+			ft_assert(*++s == '\0', "Invalid argument: %s", *arg);
+			a->f(g, arg[1]);
+			return (1);
 		}
 	}
+	return (0);
 }
 
-void		md5_proc_args(t_global *g, char **argv)
+void				md5_proc_args(t_global *g, char **argv)
 {
+	bool	filemode;
+
 	if (!*argv)
 		md5_stdin(g, NO_ARGS);
-	while (*argv)
+	filemode = false;
+	--argv;
+	while (*(++argv))
 	{
-		arg_callback(g, &argv);
-		++argv;
+		if ((ft_strcmp(*argv, "--") == 0 && !filemode) && (filemode = true))
+			continue;
+		else if ((**argv != '-' || filemode == true) && (filemode = true))
+			md5_file(g, *argv);
+		else
+			argv += match_arg(g, argv);
 	}
 }
