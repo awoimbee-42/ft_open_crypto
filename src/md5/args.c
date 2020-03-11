@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 17:56:27 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/11 09:34:36 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/03/11 19:01:01 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,6 @@
 #include "ft_md5.h"
 #include <libft/ft_exit.h>
 #include <libft/ft_str.h>
-
-static void	set_reverse(t_global *g, void *nothing);
-static void	set_quiet(t_global *g, void *nothing);
-
-static const t_arg g_args[4] = {
-	{'p', 0, md5_stdin},
-	{'q', 0, set_quiet},
-	{'r', 0, set_reverse},
-	{'s', 1, md5_str},
-};
 
 static void			set_quiet(t_global *g, void *nothing)
 {
@@ -37,14 +27,21 @@ static void			set_reverse(t_global *g, void *nothing)
 	g->reverse = true;
 }
 
-static uintptr_t	match_arg(t_global *g, char * const * const arg)
+static const t_arg g_args[4] = {
+	{'p', 0, md5_stdin},
+	{'q', 0, set_quiet},
+	{'r', 0, set_reverse},
+	{'s', 1, md5_str},
+};
+
+static uintptr_t	match_arg(t_global *g, char *const *const arg)
 {
 	const t_arg	*a;
 	char		*s;
 
 	s = *arg;
 	if (s[0] == '\0')
-		return 0;
+		return (0);
 	while (*(++s))
 	{
 		a = g_args;
@@ -68,7 +65,7 @@ void				md5_proc_args(t_global *g, char **argv)
 	bool	filemode;
 
 	if (!*argv)
-		md5_stdin(g, NO_ARGS);
+		md5_stdin(g, (void*)NO_ARGS);
 	filemode = false;
 	--argv;
 	while (*(++argv))

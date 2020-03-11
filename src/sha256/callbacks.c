@@ -6,10 +6,9 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/10 17:05:22 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/10 17:44:47 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/03/11 18:39:52 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include <unistd.h>
 #include "ft_sha256.h"
@@ -39,9 +38,9 @@ void	sha256_str(t_global *g, void *str)
 	if (!len || idx != len)
 	{
 		ft_memcpy(buf, &s[idx], len % 64);
-		sha256_pad_n_proc_c(g, buf, len % 64, len);
+		sha256_pad_n_proc(g, buf, len % 64, len);
 		sha256_print(g, 2, str);
-		return;
+		return ;
 	}
 }
 
@@ -53,7 +52,7 @@ void	sha256_file(t_global *g, const char *fname)
 	if (fd == -1)
 	{
 		ft_fprintf(2, "Could not open %s (%s)\n", fname, strerror(errno));
-		return;
+		return ;
 	}
 	sha256_fd(g, fd, fname);
 	ft_assert(close(fd) == 0, "Could not close file (%s)", fname);

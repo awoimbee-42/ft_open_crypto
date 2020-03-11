@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/05 23:20:20 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/11 14:09:16 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/03/11 18:43:23 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,5 +20,5 @@ int		main_sha256(char **argv)
 
 	ft_bzero(&globals, sizeof(globals));
 	sha256_proc_args(&globals, argv);
-	return 0;
+	return (0);
 }

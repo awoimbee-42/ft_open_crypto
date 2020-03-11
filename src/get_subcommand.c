@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/05 18:02:25 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/07 17:15:53 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/03/11 18:37:46 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 #include <libft/ft_str.h>
 
 const struct s_cmds g_cmds[] = {
-		{"md5", main_md5},
-		{"sha256", main_sha256},
-		{NULL, NULL},
+	{"md5", main_md5},
+	{"sha256", main_sha256},
+	{NULL, NULL},
 };
 
 t_subcmd	*get_subcmd(char *requested_cmd)

@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 17:57:50 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/10 17:45:44 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/03/11 18:31:50 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,7 @@
 #include <stdlib.h>
 #include <libft/ft_exit.h>
 
-/* binary integer part of the sines of integers (Radians) as constants */
-static const uint32_t	constants[64] = {
+static const uint32_t	g_constants[64] = {
 	0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee,
 	0xf57c0faf, 0x4787c62a, 0xa8304613, 0xfd469501,
 	0x698098d8, 0x8b44f7af, 0xffff5bb1, 0x895cd7be,
@@ -38,26 +37,24 @@ static const uint32_t	constants[64] = {
 };
 
 static const uint32_t	g_round_shift[64] = {
-	7, 12, 17, 22,  7, 12, 17, 22,  7, 12, 17, 22,  7, 12, 17, 22,
-	5,  9, 14, 20,  5,  9, 14, 20,  5,  9, 14, 20,  5,  9, 14, 20,
-	4, 11, 16, 23,  4, 11, 16, 23,  4, 11, 16, 23,  4, 11, 16, 23,
-	6, 10, 15, 21,  6, 10, 15, 21,  6, 10, 15, 21,  6, 10, 15, 21,
+	7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22,
+	5, 9, 14, 20, 5, 9, 14, 20, 5, 9, 14, 20, 5, 9, 14, 20,
+	4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23,
+	6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21,
 };
 
-static uint32_t leftrotate(uint32_t x, uint32_t round)
+static uint32_t	leftrotate(uint32_t x, uint32_t round)
 {
 	uint32_t	shift;
 
 	shift = g_round_shift[round];
-	return (
-		(x << shift) | (x >> (32 - shift))
-	);
+	return ((x << shift) | (x >> (32 - shift)));
 }
 
-static void	set_hashing(t_global *g)
+static void		set_hashing(t_global *g)
 {
 	if (g->hashing)
-		return;
+		return ;
 	g->hashing = true;
 	g->hashes[0] = 0x67452301;
 	g->hashes[1] = 0xefcdab89;
@@ -65,47 +62,16 @@ static void	set_hashing(t_global *g)
 	g->hashes[3] = 0x10325476;
 }
 
-void		md5_unset_hashing(t_global *g)
+static void		h_rot(uint32_t h[], uint32_t f, uint64_t i, uint32_t data)
 {
-	ft_bzero(g->hashes, sizeof(g->hashes));
-	g->hashing = false;
-}
-
-char		*md5_get_digest(t_global *g)
-{
-	const char	*str_base;
-	char		*digest[2];
-	uint8_t		*md5;
-
-	str_base = "0123456789abcdef";
-	md5 = (uint8_t*)g->hashes;
-	ft_assertp_safe(digest[0] = malloc(33), "malloc failed", NULL);
-	ft_memset(digest[0], '0', 32);
-	digest[0][32] = '\0';
-	digest[1] = digest[0];
-	while (*digest[1])
-	{
-		int v = *(md5++);
-		digest[1][1] = str_base[v % 16];
-		v /= 16;
-		digest[1][0] = str_base[v % 16];
-		digest[1] += 2;
-	}
-	md5_unset_hashing(g);
-	return digest[0];
-}
-
-
-static void	hash_rotation(uint32_t h[], uint32_t f, uint64_t i, uint32_t data)
-{
-	f += h[0] + constants[i] + data;
+	f += h[0] + g_constants[i] + data;
 	h[0] = h[3];
 	h[3] = h[2];
 	h[2] = h[1];
 	h[1] += leftrotate(f, i);
 }
 
-void		md5_chunk(t_global *g, void *chunk)
+void			md5_chunk(t_global *g, void *chunk)
 {
 	uint32_t	*c32;
 	uint32_t	h[4];
@@ -116,16 +82,16 @@ void		md5_chunk(t_global *g, void *chunk)
 	ft_memcpy(h, g->hashes, 4 * 4);
 	i = -1;
 	while (++i < 16)
-		hash_rotation(h, (h[1] & h[2]) | ((~h[1]) & h[3]), i, c32[i]);
+		h_rot(h, (h[1] & h[2]) | ((~h[1]) & h[3]), i, c32[i]);
 	--i;
 	while (++i < 32)
-		hash_rotation(h, (h[3] & h[1]) | ((~h[3]) & h[2]), i, c32[(5 * i + 1) % 16]);
+		h_rot(h, (h[3] & h[1]) | ((~h[3]) & h[2]), i, c32[(5 * i + 1) % 16]);
 	--i;
 	while (++i < 48)
-		hash_rotation(h, h[1] ^ h[2] ^ h[3], i, c32[(3 * i + 5) % 16]);
+		h_rot(h, h[1] ^ h[2] ^ h[3], i, c32[(3 * i + 5) % 16]);
 	--i;
 	while (++i < 64)
-		hash_rotation(h, h[2] ^ (h[1] | (~h[3])), i, c32[(7 * i) % 16]);
+		h_rot(h, h[2] ^ (h[1] | (~h[3])), i, c32[(7 * i) % 16]);
 	g->hashes[0] += h[0];
 	g->hashes[1] += h[1];
 	g->hashes[2] += h[2];

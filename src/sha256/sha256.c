@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 17:57:50 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/11 14:48:46 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/03/11 19:14:29 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,9 @@
 #include <libft/ft_prtf.h>
 #include <stdlib.h>
 #include <libft/ft_exit.h>
+#include <libft/ft_nb.h>
 
-/* first 32 bits of the fractional parts of the cube roots of the first 64 primes 2..311 */
-static const uint32_t	constants[64] = {
+static const uint32_t	g_constants[64] = {
 	0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5,
 	0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
 	0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3,
@@ -37,15 +37,15 @@ static const uint32_t	constants[64] = {
 	0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2,
 };
 
-static uint32_t rotright(uint32_t x, uint32_t shift)
+static uint32_t	rot_r(uint32_t x, uint32_t shift)
 {
 	return ((x >> shift) | (x << (32 - shift)));
 }
 
-static void	set_hashing(t_global *g)
+static void		set_hashing(t_global *g)
 {
 	if (g->hashing)
-		return;
+		return ;
 	g->hashing = true;
 	g->hashes[0] = 0x6a09e667;
 	g->hashes[1] = 0xbb67ae85;
@@ -57,88 +57,8 @@ static void	set_hashing(t_global *g)
 	g->hashes[7] = 0x5be0cd19;
 }
 
-void		sha256_unset_hashing(t_global *g)
+static void		add_h(t_global *g, uint32_t h[8])
 {
-	ft_bzero(g->hashes, sizeof(g->hashes));
-	g->hashing = false;
-}
-
-#include <libft/ft_nb.h>
-
-void		set_hashes_big_endian(t_global *g)
-{
-	size_t		i;
-
-	i = -1;
-	while (++i < sizeof(g->hashes) / sizeof(g->hashes[0]))
-	{
-		g->hashes[i] = ft_swap_endian32(g->hashes[i]);
-	}
-}
-
-char		*sha256_get_digest(t_global *g)
-{
-	const char	*str_base;
-	char		*digest[2];
-	uint8_t		*sha256;
-
-	str_base = "0123456789abcdef";
-	ft_assertp_safe(digest[0] = malloc(65), "malloc failed", NULL);
-	ft_memset(digest[0], '0', 64);
-	digest[0][64] = '\0';
-	digest[1] = digest[0];
-	set_hashes_big_endian(g);
-	sha256 = (uint8_t*)g->hashes;
-	while (*digest[1])
-	{
-		int v = *(sha256++);
-		digest[1][1] = str_base[v % 16];
-		v /= 16;
-		digest[1][0] = str_base[v % 16];
-		digest[1] += 2;
-	}
-	sha256_unset_hashing(g);
-	return digest[0];
-}
-
-void		sha256_chunk(t_global *g, void *chunk)
-{
-	uint32_t	msa[64];
-	uint32_t	h[8];
-	int			i;
-
-	ft_bzero(msa, sizeof(msa));
-	set_hashing(g);
-	ft_memcpy(h, g->hashes, sizeof(h));
-
-	// ft_memcpy(msa, chunk, 64);
-
-	for (int ii = 0; ii < 16; ++ii) {
-		msa[ii] = ft_swap_endian32(((uint32_t*)chunk)[ii]);
-	}
-	i = 15;
-	while (++i < 64)
-	{
-		uint32_t s0 = rotright(msa[i - 15], 7) ^ rotright(msa[i-15], 18) ^ (msa[i-15] >> 3);
-		uint32_t s1 = rotright(msa[i - 2], 17) ^ rotright(msa[i-2], 19) ^ (msa[i-2] >> 10);
-		msa[i] = s1 + msa[i-7] + s0 + msa[i-16];
-	}
-
-	i = -1;
-	while (++i < 64)
-	{
-		uint32_t EP1 = rotright(h[4], 6) ^ rotright(h[4], 11) ^ rotright(h[4], 25);
-		uint32_t ch = (h[4] & h[5]) ^ ((~h[4]) & h[6]);
-		uint32_t temp1 = h[7] + EP1 + ch + constants[i] + msa[i];
-		uint32_t EP0 = rotright(h[0], 2) ^ rotright(h[0], 13) ^ rotright(h[0], 22);
-		uint32_t maj = (h[0] & h[1]) ^ (h[0] & h[2]) ^ (h[1] & h[2]);
-		uint32_t temp2 = EP0 + maj;
-
-		ft_memmove(&h[1], &h[0], sizeof(h) - sizeof(h[0]));
-		// ft_memcpy(&h[1], &h[0], sizeof(h) - sizeof(h[0]));
-		h[4] += temp1;
-		h[0] = temp1 + temp2;
-	}
 	g->hashes[0] += h[0];
 	g->hashes[1] += h[1];
 	g->hashes[2] += h[2];
@@ -147,4 +67,45 @@ void		sha256_chunk(t_global *g, void *chunk)
 	g->hashes[5] += h[5];
 	g->hashes[6] += h[6];
 	g->hashes[7] += h[7];
+}
+
+static void		prep_msa(uint32_t msa[64], void *chunk)
+{
+	size_t		i;
+
+	i = -1;
+	while (++i < 16)
+		msa[i] = ft_swap_endian32(((uint32_t*)chunk)[i]);
+	i = 15;
+	while (++i < 64)
+		msa[i] =
+			(rot_r(msa[i - 2], 17) ^ rot_r(msa[i - 2], 19) ^ (msa[i - 2] >> 10))
+			+ (rot_r(msa[i - 15], 7)
+				^ rot_r(msa[i - 15], 18)
+				^ (msa[i - 15] >> 3))
+			+ msa[i - 7] + msa[i - 16];
+}
+
+void			sha256_chunk(t_global *g, void *chunk)
+{
+	uint32_t	m[64];
+	uint32_t	h[8];
+	int			i;
+	uint32_t	tmp[2];
+
+	set_hashing(g);
+	ft_memcpy(h, g->hashes, sizeof(h));
+	prep_msa(m, chunk);
+	i = -1;
+	while (++i < 64)
+	{
+		tmp[0] = h[7] + (rot_r(h[4], 6) ^ rot_r(h[4], 11) ^ rot_r(h[4], 25))
+			+ ((h[4] & h[5]) ^ ((~h[4]) & h[6])) + g_constants[i] + m[i];
+		tmp[1] = (rot_r(h[0], 2) ^ rot_r(h[0], 13) ^ rot_r(h[0], 22))
+			+ ((h[0] & h[1]) ^ (h[0] & h[2]) ^ (h[1] & h[2]));
+		ft_memmove(&h[1], &h[0], sizeof(h) - sizeof(h[0]));
+		h[4] += tmp[0];
+		h[0] = tmp[0] + tmp[1];
+	}
+	add_h(g, h);
 }

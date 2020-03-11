@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 17:55:32 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/10 17:45:03 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/03/11 19:02:16 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 **	stdin 1
 **	str   2
 */
+
 void		md5_print(t_global *g, int type, const char *fname)
 {
 	char	*digest;
@@ -43,12 +44,13 @@ void		md5_print(t_global *g, int type, const char *fname)
 	free(digest);
 }
 
-void		md5_pad_n_proc_c(t_global *g, char *in, size_t len, size_t tot_len)
+void		md5_pad_n_proc(t_global *g, char *in, size_t len, size_t tot_len)
 {
 	bool	one_not_written;
 
 	one_not_written = 1;
-	if (len >= 56) {
+	if (len >= 56)
+	{
 		one_not_written = 0;
 		ft_bzero(&in[len], 64 - len);
 		in[len] |= 1 << 7;
@@ -82,7 +84,7 @@ void		md5_fd(t_global *g, int filedesc, const char *fname)
 	tot_len = 0;
 	while (!read_file(g, filedesc, fname, &content))
 	{
-		if (filedesc == STDIN_FILENO && fname != NO_ARGS)
+		if (filedesc == STDIN_FILENO && fname != (void*)NO_ARGS)
 			write(1, content.dat, content.len);
 		tot_len += content.len;
 		idx = 0;
@@ -93,11 +95,11 @@ void		md5_fd(t_global *g, int filedesc, const char *fname)
 		}
 		if (!content.len || idx != content.len)
 		{
-			if (filedesc == STDIN_FILENO && fname != NO_ARGS)
+			if (filedesc == STDIN_FILENO && fname != (void*)NO_ARGS)
 				write(1, "\n", 1);
-			md5_pad_n_proc_c(g, &content.dat[idx], content.len % 64, tot_len);
+			md5_pad_n_proc(g, &content.dat[idx], content.len % 64, tot_len);
 			md5_print(g, filedesc == STDIN_FILENO, fname);
-			return;
+			return ;
 		}
 	}
 }

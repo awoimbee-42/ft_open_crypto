@@ -6,7 +6,7 @@
 #    By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/26 22:06:19 by marvin            #+#    #+#              #
-#    Updated: 2020/03/09 15:17:36 by awoimbee         ###   ########.fr        #
+#    Updated: 2020/03/11 19:00:34 by awoimbee         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -61,7 +61,7 @@ all : $(LFT)
 ############## LIBS ############
 $(LFT) :
 	@printf "$(YLW)Making libft...$(EOC)\n"
-	@$(MAKE) -j$(NUMPROC) -s -C libft/
+	@$(MAKE) -j$(NUMPROC) -s -C libft/ fast
 ################################
 
 $(NAME) : $(LFT) $(OBJ)
