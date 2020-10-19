@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/05 18:03:59 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/11 18:38:34 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/10/19 19:23:53 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,17 +17,15 @@
 # include <stddef.h>
 # include <sys/types.h>
 
-typedef int(t_subcmd)(char *[]);
+typedef	int(t_main_fn)(int, char *[]);
 
-struct		s_cmds
+typedef struct	s_main_cmds
 {
 	char		*name;
-	t_subcmd	*fn_ptr;
-};
+	t_main_fn	*fn;
+}				t_main_cmd;
 
-t_subcmd	*get_subcmd(char *requested_cmd);
-
-int			main_md5(char *s[]);
-int			main_sha256(char *s[]);
+int				main_md5(int ac, char *av[]);
+int				main_sha256(int ac, char *av[]);
 
 #endif

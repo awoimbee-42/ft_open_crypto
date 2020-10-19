@@ -6,21 +6,37 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/05 16:53:55 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/11 18:38:04 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/10/19 19:22:22 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "main.h"
 #include <unistd.h>
+#include <libft/ft_str.h>
+#include <libft/ft_prtf.h>
 
-int		main(int argc, char *argv[])
+int		usage(char *name)
 {
-	t_subcmd	*command;
+	ft_printf("Usage: %s command [command opts] [command args]\n", name);
+	return (0);
+}
 
-	(void)argc;
-	command = get_subcmd(argv[1]);
-	if (command)
-		command(&argv[2]);
-	else
-		write(1, "PUTE\n", 5);
+int		main(int ac, char *av[])
+{
+	t_main_cmd	cmds[2];
+	t_main_cmd	*p;
+
+	cmds[0] = (t_main_cmd){"md5", main_md5};
+	cmds[1] = (t_main_cmd){"sha256", main_sha256};
+	p = cmds;
+	if (ac > 1)
+	{
+		while (p != &cmds[2])
+		{
+			if (!strcmp(av[1], p->name))
+				return (p->fn(ac, av));
+			p = &p[1];
+		}
+	}
+	return (usage(av[0]));
 }
