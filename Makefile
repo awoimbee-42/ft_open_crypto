@@ -6,7 +6,7 @@
 #    By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/26 22:06:19 by marvin            #+#    #+#              #
-#    Updated: 2020/03/11 19:48:51 by awoimbee         ###   ########.fr        #
+#    Updated: 2020/10/19 20:08:44 by awoimbee         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,6 @@
 NAME := ft_ssl
 
 CFLAGS := -Ofast -Wall -Wextra #-Werror -fno-builtin
-
 
 SRC_NAME = $(shell cd src && find . -type f -name "*.c")
 
@@ -67,6 +66,10 @@ $(LFT) :
 $(NAME) : $(LFT) $(OBJ)
 	@printf "$(GRN)Linking $@...$(EOC)\n"
 	$(CC) $(CFLAGS) $(OBJ) -o $@ $(LDFLAGS) $(LDLIBS)
+
+lib$(NAME).a: $(OBJ)
+	ar -rcs $@ $(OBJ)
+	ar -d ./libft_ssl.a main.c.o
 
 $(BUILD_FOLDER) :
 	@mkdir -p $(BUILD_PATH) 2> /dev/null | true

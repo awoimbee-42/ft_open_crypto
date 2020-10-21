@@ -1,35 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   args.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/03/05 23:20:20 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/10/21 12:34:58 by awoimbee         ###   ########.fr       */
+/*   Created: 2020/10/20 15:44:42 by awoimbee          #+#    #+#             */
+/*   Updated: 2020/10/21 12:31:25 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "main.h"
-#include "args.h"
-#include "ft_sha256.h"
-#include <libft/ft_mem.h>
+#ifndef ARGS_H
+# define ARGS_H
 
+#include <inttypes.h>
+#include <stdbool.h>
 
-
-int		main_sha256(int ac, char *argv[])
+typedef struct	s_digest_args
 {
-	t_digest_args	a;
-	t_global	globals;
+	bool		echo;
+	bool		quiet;
+	bool		rev_fmt;
+	bool		str;
+	char		*input;
+}				t_digest_args;
 
+t_digest_args parse_digest_args(char *av[]);
 
-	ft_bzero(&globals, sizeof(globals));
-	a = parse_digest_args(&argv[2]);
-	if (!a.input)
-		sha256_stdin();
-	else if (!a.str)
-		sha256_fd();
-	else
-		sha256_str();
-	return (0);
-}
+#endif
