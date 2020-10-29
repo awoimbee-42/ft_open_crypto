@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/27 19:52:43 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/10/29 16:30:44 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/10/30 17:31:33 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,24 +15,33 @@
 
 #include <stdbool.h>
 
+typedef char*(*t_digest_fn)(t_fstream*, bool);
+
+typedef struct	s_digest
+{
+	const char	*arg_name;
+	const char	*print_name;
+	t_digest_fn	fn;
+}				t_digest;
+
 typedef struct	s_digest_args
 {
-	bool		echo;
-	bool		quiet;
-	bool		rev_fmt;
-	bool		from_argv;
-	int			fd;
-	char		*fname;
+	const t_digest	*d;
+	bool			echo;
+	bool			quiet;
+	bool			rev;
+	bool			file_mode;
+	bool			did_something;
 }				t_digest_args;
 
-typedef char*(*t_digest_fn)(const t_digest_args*);
+typedef enum	e_print_fmt
+{
+	FMT_FILE,
+	FMT_STDIN,
+	FMT_STR,
+}				t_print_fmt;
 
-struct s_digest_fn_from_str {
-	char		*name;
-	t_digest_fn	*fn;
-};
-
-char		*md5_fd(const t_digest_args* args);
-char		*sha256_fd(const t_digest_args* args);
+char			*md5_fd(t_fstream *s, bool echo);
+char			*sha256_fd(t_fstream *s, bool echo);
 
 #endif

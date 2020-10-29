@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 18:45:25 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/10/29 16:30:20 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/10/30 17:12:44 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,16 +25,16 @@ typedef struct	s_global_sha256
 {
 	uint32_t			hashes[8];
 	bool				hashing;
-	const t_digest_args	*args;
+	t_fstream			*stream;
 }				t_global_sha256;
 
 
 /*
 **	sha256_fd.c
 */
-char			*sha256_fd(const t_digest_args* args);
+char			*sha256_fd(t_fstream *s, bool echo);
 void			sha256_print(t_global_sha256 *g, int type, const char *fname);
-void			sha256_pad_n_proc(t_global_sha256 *g, char *in, size_t len,
+void			sha256_pad_n_proc(t_global_sha256 *g, uint8_t *in, size_t len,
 									size_t flen);
 
 /*

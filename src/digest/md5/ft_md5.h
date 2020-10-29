@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 18:45:25 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/10/29 16:30:59 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/10/30 17:11:30 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,15 +25,15 @@ typedef struct	s_global_md5
 {
 	uint32_t			hashes[4];
 	bool				hashing;
-	const t_digest_args	*args;
+	t_fstream			*stream;
 }				t_global_md5;
 
 /*
 **	md5_fd.c
 */
-char			*md5_fd(const t_digest_args *args);
+char			*md5_fd(t_fstream *s, bool echo);
 void			md5_print(t_global_md5 *g, int type, const char *fname);
-void			md5_pad_n_proc(t_global_md5 *g, char *in, size_t len, size_t flen);
+void			md5_pad_n_proc(t_global_md5 *g, uint8_t *in, size_t len, size_t flen);
 
 /*
 **	callbacks.c

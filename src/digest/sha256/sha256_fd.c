@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 17:55:32 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/10/29 16:34:20 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/10/30 17:13:17 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,31 +23,7 @@
 #include <string.h>
 #include <unistd.h>
 
-/*
-**	file  0
-**	stdin 1
-**	str   2
-*/
-
-void		sha256_print(t_global_sha256 *g, int type, const char *fname)
-{
-	char	*digest;
-
-	digest = sha256_get_digest(g);
-	if (g->args->quiet || type == 1)
-		ft_printf("%s\n", digest);
-	else if (type == 0 && g->args->rev_fmt)
-		ft_printf("%s %s\n", digest, fname);
-	else if (type == 0)
-		ft_printf("SHA256 (%s) = %s\n", fname, digest);
-	else if (type == 2 && g->args->rev_fmt)
-		ft_printf("%s \"%s\"\n", digest, fname);
-	else if (type == 2)
-		ft_printf("SHA256 (\"%s\") = %s\n", fname, digest);
-	free(digest);
-}
-
-void		sha256_pad_n_proc(t_global_sha256 *g, char *in, size_t len, size_t tot_len)
+void		sha256_pad_n_proc(t_global_sha256 *g, uint8_t *in, size_t len, size_t tot_len)
 {
 	bool	one_not_written;
 
@@ -66,22 +42,20 @@ void		sha256_pad_n_proc(t_global_sha256 *g, char *in, size_t len, size_t tot_len
 	sha256_chunk(g, in);
 }
 
-char		*sha256_fd(const t_digest_args *args)
+char			*sha256_fd(t_fstream *s, bool echo)
 {
 	t_global_sha256	g;
-	t_fstream		*fstream;
 
 	ft_bzero(&g, sizeof(g));
-	g.args = args;
-	fstream = ft_fstream_setup_fd(g.args->fd, 64);
-	while (ft_fstream(fstream))
+	g.stream = s;
+	while (ft_fstream(s))
 	{
-		if (args->fd == STDIN_FILENO)
-			write(1, fstream->s.chunk, fstream->s.len);
-		if (likely(fstream->s.len == 64))
-			sha256_chunk(&g, fstream->s.chunk);
+		if (echo)
+			write(1, s->p.buf, s->p.len);
+		if (__builtin_expect(s->p.len == 64, true))
+			sha256_chunk(&g, s->p.buf);
 		else {
-			sha256_pad_n_proc(&g, fstream->s.chunk, fstream->s.len, fstream->len_read);
+			sha256_pad_n_proc(&g, s->p.buf, s->p.len, s->p.total_len);
 		}
 	}
 	return (sha256_get_digest(&g));

@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 17:55:32 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/10/29 16:34:30 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/10/30 17:11:19 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,31 +22,7 @@
 #include <errno.h>
 #include <string.h>
 
-/*
-**	file  0
-**	stdin 1
-**	str   2
-*/
-
-void		md5_print(t_global_md5 *g, int type, const char *fname)
-{
-	char	*digest;
-
-	digest = md5_get_digest(g);
-	if (g->args->quiet || type == 1)
-		ft_printf("%s\n", digest);
-	else if (type == 0 && g->args->rev_fmt)
-		ft_printf("%s %s\n", digest, fname);
-	else if (type == 0)
-		ft_printf("MD5 (%s) = %s\n", fname, digest);
-	else if (type == 2 && g->args->rev_fmt)
-		ft_printf("%s \"%s\"\n", digest, fname);
-	else if (type == 2)
-		ft_printf("MD5 (\"%s\") = %s\n", fname, digest);
-	free(digest);
-}
-
-void		md5_pad_n_proc(t_global_md5 *g, char *in, size_t cur_len, size_t read_len)
+void		md5_pad_n_proc(t_global_md5 *g, uint8_t *in, size_t cur_len, size_t read_len)
 {
 	bool	one_not_written;
 
@@ -65,22 +41,20 @@ void		md5_pad_n_proc(t_global_md5 *g, char *in, size_t cur_len, size_t read_len)
 	md5_chunk(g, in);
 }
 
-char		*md5_fd(const t_digest_args* args)
+char		*md5_fd(t_fstream *s, bool echo)
 {
 	t_global_md5	g;
-	t_fstream		*fstream;
 
 	ft_bzero(&g, sizeof(g));
-	g.args = args;
-	fstream = ft_fstream_setup_fd(g.args->fd, 64);
-	while (ft_fstream(fstream))
+	g.stream = s;
+	while (ft_fstream(s))
 	{
-		if (args->fd == STDIN_FILENO)
-			write(1, fstream->s.chunk, fstream->s.len);
-		if (likely(fstream->s.len == 64))
-			md5_chunk(&g, fstream->s.chunk);
+		if (echo)
+			write(1, s->p.buf, s->p.len);
+		if (__builtin_expect(s->p.len == 64, true))
+			md5_chunk(&g, s->p.buf);
 		else {
-			md5_pad_n_proc(&g, fstream->s.chunk, fstream->s.len, fstream->len_read);
+			md5_pad_n_proc(&g, s->p.buf, s->p.len, s->p.total_len);
 		}
 	}
 	return (md5_get_digest(&g));
