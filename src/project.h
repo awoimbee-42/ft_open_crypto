@@ -1,30 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   args.h                                             :+:      :+:    :+:   */
+/*   project.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/10/20 15:44:42 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/10/21 12:31:25 by awoimbee         ###   ########.fr       */
+/*   Created: 2020/10/29 16:32:44 by awoimbee          #+#    #+#             */
+/*   Updated: 2020/10/29 16:33:47 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ARGS_H
-# define ARGS_H
+#ifndef FT_PROJECT_H
+# define FT_PROJECT_H
 
-#include <inttypes.h>
-#include <stdbool.h>
+# define likely(x)      __builtin_expect(!!(x), 1)
+# define unlikely(x)    __builtin_expect(!!(x), 0)
 
-typedef struct	s_digest_args
-{
-	bool		echo;
-	bool		quiet;
-	bool		rev_fmt;
-	bool		str;
-	char		*input;
-}				t_digest_args;
-
-t_digest_args parse_digest_args(char *av[]);
+# include <stdlib.h>
+# include <stdint.h>
+# include <stdbool.h>
 
 #endif

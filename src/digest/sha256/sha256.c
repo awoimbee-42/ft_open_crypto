@@ -6,10 +6,11 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 17:57:50 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/11 19:14:29 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/10/29 16:34:11 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "project.h"
 #include "ft_sha256.h"
 #include <stdint.h>
 #include <libft/ft_mem.h>
@@ -42,7 +43,7 @@ static uint32_t	rot_r(uint32_t x, uint32_t shift)
 	return ((x >> shift) | (x << (32 - shift)));
 }
 
-static void		set_hashing(t_global *g)
+static void		set_hashing(t_global_sha256 *g)
 {
 	if (g->hashing)
 		return ;
@@ -57,7 +58,7 @@ static void		set_hashing(t_global *g)
 	g->hashes[7] = 0x5be0cd19;
 }
 
-static void		add_h(t_global *g, uint32_t h[8])
+static void		add_h(t_global_sha256 *g, uint32_t h[8])
 {
 	g->hashes[0] += h[0];
 	g->hashes[1] += h[1];
@@ -86,7 +87,7 @@ static void		prep_msa(uint32_t msa[64], void *chunk)
 			+ msa[i - 7] + msa[i - 16];
 }
 
-void			sha256_chunk(t_global *g, void *chunk)
+void			sha256_chunk(t_global_sha256 *g, void *chunk)
 {
 	uint32_t	m[64];
 	uint32_t	h[8];

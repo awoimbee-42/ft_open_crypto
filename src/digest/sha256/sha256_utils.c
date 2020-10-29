@@ -6,23 +6,24 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/11 19:10:22 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/11 19:11:40 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/10/29 16:34:16 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "project.h"
 #include "ft_sha256.h"
 #include <libft/ft_mem.h>
 #include <libft/ft_exit.h>
 #include <libft/ft_nb.h>
 #include <stdlib.h>
 
-void			sha256_unset_hashing(t_global *g)
+void			sha256_unset_hashing(t_global_sha256 *g)
 {
 	ft_bzero(g->hashes, sizeof(g->hashes));
 	g->hashing = false;
 }
 
-char			*sha256_get_digest(t_global *g)
+char			*sha256_get_digest(t_global_sha256 *g)
 {
 	const char	*str_base;
 	char		*digest[2];

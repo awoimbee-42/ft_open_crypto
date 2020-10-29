@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/05 18:03:59 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/10/19 19:23:53 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/10/29 16:32:35 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,12 @@
 
 typedef	int(t_main_fn)(int, char *[]);
 
-typedef struct	s_main_cmds
+typedef struct	s_cmd_from_str
 {
-	char		*name;
+	char		*str;
 	t_main_fn	*fn;
-}				t_main_cmd;
+}				t_cmd_from_str;
 
-int				main_md5(int ac, char *av[]);
-int				main_sha256(int ac, char *av[]);
+int		digest_main(int argc, char *argv[]);
 
 #endif

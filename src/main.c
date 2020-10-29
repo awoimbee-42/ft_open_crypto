@@ -6,10 +6,11 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/05 16:53:55 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/10/21 12:28:40 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/10/29 16:34:02 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "project.h"
 #include "main.h"
 #include <unistd.h>
 #include <libft/ft_str.h>
@@ -37,19 +38,21 @@ int		usage(char *name)
 
 int		main(int ac, char *av[])
 {
-	t_main_cmd	cmds[2];
-	t_main_cmd	*p;
+	char	*p;
+	const char	*digests = {
+		"md5",
+		"sha256",
+		NULL,
+	};
 
-	cmds[0] = (t_main_cmd){"md5", main_md5};
-	cmds[1] = (t_main_cmd){"sha256", main_sha256};
-	p = cmds;
 	if (ac < 2 || !strcmp(av[1], "-h"))
 		return usage(av[0]);
-	while (p != &cmds[2])
+	p = digests;
+	while (*p)
 	{
-		if (!strcmp(av[1], p->name))
-			return (p->fn(ac, av));
-		p = &p[1];
+		if (!strcmp(av[1], *p))
+			return digest_main(ac, av);
+		++p;
 	}
 	ft_printf("%s: Error: '%s' is an invalid command.", av[0], av[1]);
 	print_cmds();
