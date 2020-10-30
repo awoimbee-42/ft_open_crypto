@@ -6,7 +6,7 @@
 #    By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/26 22:06:19 by marvin            #+#    #+#              #
-#    Updated: 2020/10/31 00:11:38 by awoimbee         ###   ########.fr        #
+#    Updated: 2020/10/31 00:26:07 by awoimbee         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -89,7 +89,7 @@ $(OBJ_FOLDER)/%.cpp.o : $(SRC_PATH)/%.cpp | $(BUILD_FOLDER)/obj
 # The '-' makes it doesn't care if the file exists or not
 -include $(OBJ_NM:.o=.d) $(OBJ_OTOOL:.o=.d)
 
-test:
+test: all
 	python3 ./tests/func/test.py
 
 obj_clean :

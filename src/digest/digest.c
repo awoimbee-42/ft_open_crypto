@@ -6,13 +6,14 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/27 20:03:41 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/10/31 00:10:37 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/10/31 00:25:47 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "project.h"
 #include "digest.h"
 #include "main.h"
+#include <errno.h>
 
 void t_digest_args_zero(t_digest_args *a)
 {
@@ -58,7 +59,7 @@ void			do_stdin(t_digest_args *a, bool echo)
 	print_res(out, NULL, a->d->print_name, a, FMT_STDIN);
 }
 
-void			do_str(t_digest_args *a, char *str)
+void			do_str(t_digest_args *a, const char *str)
 {
 	t_fstream		*s;
 	char			*out;
@@ -70,13 +71,19 @@ void			do_str(t_digest_args *a, char *str)
 	print_res(out, str, a->d->print_name, a, FMT_STR);
 }
 
-void			do_file(t_digest_args *a, char *fname)
+void			do_file(t_digest_args *a, const char *fname, const char *cmd)
 {
 	t_fstream		*s;
 	char			*out;
 
+	a->file_mode = true;
 	a->did_something = true;
 	s = ft_fstream_setup_fname(fname, 64);
+	if (!s)
+	{
+		ft_printf("ft_ssl: %s: %s: %s\n", cmd, fname, strerror(errno));
+		return ;
+	}
 	out = a->d->fn(s, false);
 	print_res(out, fname, a->d->print_name, a, FMT_FILE);
 }
@@ -108,7 +115,7 @@ t_digest_args parse_digest_args(char *av[], t_digest *d)
 				ft_printf("Unrecognised flag: %s\n", *av);
 		}
 		else
-			do_file(&a, *av);
+			do_file(&a, *av, d->arg_name);
 		av = &av[1];
 	}
 	if (!a.did_something)
