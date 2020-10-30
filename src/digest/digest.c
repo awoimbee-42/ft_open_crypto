@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/27 20:03:41 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/10/31 00:25:47 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/10/31 00:44:47 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,6 @@ t_digest_args parse_digest_args(char *av[], t_digest *d)
 	a.d = d;
 	while (*av)
 	{
-		// ft_printf("%s\n", *av);
 		if (!ft_strcmp(*av, "--"))
 			a.file_mode = true;
 		else if (a.file_mode == false && **av == '-')
@@ -123,17 +122,27 @@ t_digest_args parse_digest_args(char *av[], t_digest *d)
 	return (a);
 }
 
+static t_digest g_digests[] = {
+	(t_digest){"md5", "MD5", md5_fd},
+	(t_digest){"sha256", "SHA256", sha256_fd},
+};
 
-int		digest_main(int argc, char *argv[])
+t_digest	*get_digest(char *name)
 {
-	t_digest cmds[2];
+	t_digest	*p;
 
-	cmds[0] = (typeof(cmds[0])){"md5", "MD5", md5_fd};
-	cmds[1] = (typeof(cmds[0])){"sha256", "SHA256", sha256_fd};
+	p = &g_digests[0];
+	while (p != &g_digests[2])
+	{
+		if (!strcmp(p->arg_name, name))
+			return (p);
+		p = &p[1];
+	}
+	return (NULL);
+}
 
-	parse_digest_args(&argv[2], &cmds[0]);
+int		digest_main(t_digest *d, char *argv[])
+{
+	parse_digest_args(&argv[2], d);
 	return 0;
-	// void		md5_fd(const t_digest_args* args)
-
-
 }

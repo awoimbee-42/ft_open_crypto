@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/27 19:52:43 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/10/30 17:31:33 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/10/31 00:39:06 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ typedef enum	e_print_fmt
 	FMT_STR,
 }				t_print_fmt;
 
+t_digest		*get_digest(char *name);
+int				digest_main(t_digest *d, char *argv[]);
 char			*md5_fd(t_fstream *s, bool echo);
 char			*sha256_fd(t_fstream *s, bool echo);
 
