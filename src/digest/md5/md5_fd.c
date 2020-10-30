@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 17:55:32 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/10/30 17:11:19 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/10/31 00:09:42 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,14 +47,14 @@ char		*md5_fd(t_fstream *s, bool echo)
 
 	ft_bzero(&g, sizeof(g));
 	g.stream = s;
-	while (ft_fstream(s))
+	while (ft_fstream_autofree(&s))
 	{
 		if (echo)
-			write(1, s->p.buf, s->p.len);
-		if (__builtin_expect(s->p.len == 64, true))
-			md5_chunk(&g, s->p.buf);
+			write(1, s->s.buf, s->s.len);
+		if (__builtin_expect(s->s.len == 64, true))
+			md5_chunk(&g, s->s.buf);
 		else {
-			md5_pad_n_proc(&g, s->p.buf, s->p.len, s->p.total_len);
+			md5_pad_n_proc(&g, s->s.buf, s->s.len, s->s.total_len);
 		}
 	}
 	return (md5_get_digest(&g));

@@ -6,7 +6,7 @@
 #    By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/26 22:06:19 by marvin            #+#    #+#              #
-#    Updated: 2020/10/19 20:08:44 by awoimbee         ###   ########.fr        #
+#    Updated: 2020/10/31 00:11:38 by awoimbee         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@
 
 NAME := ft_ssl
 
-CFLAGS := -Ofast -Wall -Wextra #-Werror -fno-builtin
+CFLAGS :=  -g3 -Wall -Wextra #-Werror -fno-builtin -Ofast
 
 SRC_NAME = $(shell cd src && find . -type f -name "*.c")
 
@@ -67,10 +67,6 @@ $(NAME) : $(LFT) $(OBJ)
 	@printf "$(GRN)Linking $@...$(EOC)\n"
 	$(CC) $(CFLAGS) $(OBJ) -o $@ $(LDFLAGS) $(LDLIBS)
 
-lib$(NAME).a: $(OBJ)
-	ar -rcs $@ $(OBJ)
-	ar -d ./libft_ssl.a main.c.o
-
 $(BUILD_FOLDER) :
 	@mkdir -p $(BUILD_PATH) 2> /dev/null | true
 	@mkdir -p $(OBJ_FOLDER) 2> /dev/null | true
@@ -93,6 +89,9 @@ $(OBJ_FOLDER)/%.cpp.o : $(SRC_PATH)/%.cpp | $(BUILD_FOLDER)/obj
 # The '-' makes it doesn't care if the file exists or not
 -include $(OBJ_NM:.o=.d) $(OBJ_OTOOL:.o=.d)
 
+test:
+	python3 ./tests/func/test.py
+
 obj_clean :
 	@printf "$(RED)Cleaning $(OBJ_FOLDER)$(EOC)\n"
 	@rm -rf $(OBJ_FOLDER)
@@ -112,7 +111,7 @@ sclean	:	obj_clean
 re		:	fclean		all
 sre		:	obj_clean		all
 
-.PHONY: all obj_clean clean fclean re sre
+.PHONY: all test obj_clean clean fclean re sre
 
 RED = \033[1;31m
 GRN = \033[1;32m

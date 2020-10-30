@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/27 20:03:41 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/10/30 18:20:36 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/10/31 00:10:37 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,6 @@ void			do_stdin(t_digest_args *a, bool echo)
 		a->echo = echo;
 	s = ft_fstream_setup_fd(0, 64);
 	out = a->d->fn(s, a->echo);
-	ft_fstream_kill(s);
 	print_res(out, NULL, a->d->print_name, a, FMT_STDIN);
 }
 
@@ -68,7 +67,6 @@ void			do_str(t_digest_args *a, char *str)
 	ft_assert(str != NULL, "Missing string after '-s'\n");
 	s = ft_fstream_setup_str(str, 64);
 	out = a->d->fn(s, false);
-	ft_fstream_kill(s);
 	print_res(out, str, a->d->print_name, a, FMT_STR);
 }
 
@@ -80,7 +78,6 @@ void			do_file(t_digest_args *a, char *fname)
 	a->did_something = true;
 	s = ft_fstream_setup_fname(fname, 64);
 	out = a->d->fn(s, false);
-	ft_fstream_kill(s);
 	print_res(out, fname, a->d->print_name, a, FMT_FILE);
 }
 
@@ -106,7 +103,7 @@ t_digest_args parse_digest_args(char *av[], t_digest *d)
 			else if (!ft_strcmp(&((*av)[1]), "r"))
 				a.rev = true;
 			else if (!ft_strcmp(&((*av)[1]), "s"))
-				do_str(&a, *++av);
+				do_str(&a, *(++av));
 			else
 				ft_printf("Unrecognised flag: %s\n", *av);
 		}
