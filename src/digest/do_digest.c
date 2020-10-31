@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/31 17:54:29 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/10/31 18:10:37 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/10/31 22:57:23 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 */
 
 static void		print_res(
-	const char *digest,
+	char *digest,
 	const char *fname,
 	t_digest_args *a,
 	t_print_fmt fmt)
@@ -37,6 +37,7 @@ static void		print_res(
 		ft_printf("%s \"%s\"\n", digest, fname);
 	else if (fmt == FMT_STR)
 		ft_printf("%s (\"%s\") = %s\n", a->d->print_name, fname, digest);
+	free(digest);
 }
 
 void			do_stdin(t_digest_args *a, bool echo)
