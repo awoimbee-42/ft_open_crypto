@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 18:45:25 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/10/30 17:12:44 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/10/31 18:11:38 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # include <stdbool.h>
 # include <inttypes.h>
 
-#include "../digest.h"
+# include "../digest.h"
 
 typedef struct	s_global_sha256
 {
@@ -28,21 +28,10 @@ typedef struct	s_global_sha256
 	t_fstream			*stream;
 }				t_global_sha256;
 
-
 /*
 **	sha256_fd.c
 */
 char			*sha256_fd(t_fstream *s, bool echo);
-void			sha256_print(t_global_sha256 *g, int type, const char *fname);
-void			sha256_pad_n_proc(t_global_sha256 *g, uint8_t *in, size_t len,
-									size_t flen);
-
-/*
-**	callbacks.c
-*/
-void			sha256_stdin(t_global_sha256 *g, void *fuck_c);
-void			sha256_file(t_global_sha256 *g, const char *fname);
-void			sha256_str(t_global_sha256 *g, void *str);
 
 /*
 **	sha256.c

@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 18:45:25 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/10/30 17:11:30 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/10/31 18:11:18 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # include <stdbool.h>
 # include <inttypes.h>
 
-#include "../digest.h"
+# include "../digest.h"
 
 typedef struct	s_global_md5
 {
@@ -32,15 +32,6 @@ typedef struct	s_global_md5
 **	md5_fd.c
 */
 char			*md5_fd(t_fstream *s, bool echo);
-void			md5_print(t_global_md5 *g, int type, const char *fname);
-void			md5_pad_n_proc(t_global_md5 *g, uint8_t *in, size_t len, size_t flen);
-
-/*
-**	callbacks.c
-*/
-void			md5_stdin(t_global_md5 *g, void *fuck_c);
-void			md5_file(t_global_md5 *g, const char *fname);
-void			md5_str(t_global_md5 *g, void *str);
 
 /*
 **	md5.c

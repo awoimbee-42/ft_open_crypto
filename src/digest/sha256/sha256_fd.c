@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 17:55:32 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/10/30 23:50:54 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/10/31 18:11:54 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,11 @@
 #include <string.h>
 #include <unistd.h>
 
-void		sha256_pad_n_proc(t_global_sha256 *g, uint8_t *in, size_t len, size_t tot_len)
+static void	sha256_pad_n_proc(
+	t_global_sha256 *g,
+	uint8_t *in,
+	size_t len,
+	size_t tot_len)
 {
 	bool	one_not_written;
 
@@ -42,7 +46,7 @@ void		sha256_pad_n_proc(t_global_sha256 *g, uint8_t *in, size_t len, size_t tot_
 	sha256_chunk(g, in);
 }
 
-char			*sha256_fd(t_fstream *s, bool echo)
+char		*sha256_fd(t_fstream *s, bool echo)
 {
 	t_global_sha256	g;
 
@@ -54,9 +58,8 @@ char			*sha256_fd(t_fstream *s, bool echo)
 			write(1, s->s.buf, s->s.len);
 		if (__builtin_expect(s->s.len == 64, true))
 			sha256_chunk(&g, s->s.buf);
-		else {
+		else
 			sha256_pad_n_proc(&g, s->s.buf, s->s.len, s->s.total_len);
-		}
 	}
 	return (sha256_get_digest(&g));
 }

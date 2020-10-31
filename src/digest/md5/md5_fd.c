@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 17:55:32 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/10/31 00:09:42 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/10/31 18:03:27 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,11 @@
 #include <errno.h>
 #include <string.h>
 
-void		md5_pad_n_proc(t_global_md5 *g, uint8_t *in, size_t cur_len, size_t read_len)
+static void	md5_pad_n_proc(
+	t_global_md5 *g,
+	uint8_t *in,
+	size_t cur_len,
+	size_t read_len)
 {
 	bool	one_not_written;
 
@@ -53,9 +57,8 @@ char		*md5_fd(t_fstream *s, bool echo)
 			write(1, s->s.buf, s->s.len);
 		if (__builtin_expect(s->s.len == 64, true))
 			md5_chunk(&g, s->s.buf);
-		else {
+		else
 			md5_pad_n_proc(&g, s->s.buf, s->s.len, s->s.total_len);
-		}
 	}
 	return (md5_get_digest(&g));
 }
