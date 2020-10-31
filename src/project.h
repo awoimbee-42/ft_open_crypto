@@ -1,24 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   project.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/03/05 23:20:20 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/10/19 19:02:56 by awoimbee         ###   ########.fr       */
+/*   Created: 2020/10/29 16:32:44 by awoimbee          #+#    #+#             */
+/*   Updated: 2020/10/29 22:48:10 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "main.h"
-#include "ft_sha256.h"
-#include <libft/ft_mem.h>
+#ifndef FT_PROJECT_H
+# define FT_PROJECT_H
 
-int		main_sha256(int ac, char *argv[])
-{
-	t_global	globals;
+# include <stdlib.h>
+# include <stdint.h>
+# include <stdbool.h>
+# include <libft.h>
 
-	ft_bzero(&globals, sizeof(globals));
-	sha256_proc_args(&globals, &argv[2]);
-	return (0);
-}
+#endif

@@ -6,22 +6,23 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/11 18:32:11 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/11 19:01:41 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/10/29 16:34:25 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "project.h"
 #include "ft_md5.h"
 #include <libft/ft_mem.h>
 #include <libft/ft_exit.h>
 #include <stdlib.h>
 
-void			md5_unset_hashing(t_global *g)
+void			md5_unset_hashing(t_global_md5 *g)
 {
 	ft_bzero(g->hashes, sizeof(g->hashes));
 	g->hashing = false;
 }
 
-char			*md5_get_digest(t_global *g)
+char			*md5_get_digest(t_global_md5 *g)
 {
 	const char	*str_base;
 	char		*digest[2];

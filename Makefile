@@ -6,7 +6,7 @@
 #    By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/26 22:06:19 by marvin            #+#    #+#              #
-#    Updated: 2020/03/11 19:48:51 by awoimbee         ###   ########.fr        #
+#    Updated: 2020/10/31 00:26:07 by awoimbee         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,8 +16,7 @@
 
 NAME := ft_ssl
 
-CFLAGS := -Ofast -Wall -Wextra #-Werror -fno-builtin
-
+CFLAGS :=  -g3 -Wall -Wextra #-Werror -fno-builtin -Ofast
 
 SRC_NAME = $(shell cd src && find . -type f -name "*.c")
 
@@ -90,6 +89,9 @@ $(OBJ_FOLDER)/%.cpp.o : $(SRC_PATH)/%.cpp | $(BUILD_FOLDER)/obj
 # The '-' makes it doesn't care if the file exists or not
 -include $(OBJ_NM:.o=.d) $(OBJ_OTOOL:.o=.d)
 
+test: all
+	python3 ./tests/func/test.py
+
 obj_clean :
 	@printf "$(RED)Cleaning $(OBJ_FOLDER)$(EOC)\n"
 	@rm -rf $(OBJ_FOLDER)
@@ -109,7 +111,7 @@ sclean	:	obj_clean
 re		:	fclean		all
 sre		:	obj_clean		all
 
-.PHONY: all obj_clean clean fclean re sre
+.PHONY: all test obj_clean clean fclean re sre
 
 RED = \033[1;31m
 GRN = \033[1;32m

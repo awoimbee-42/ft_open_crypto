@@ -1,15 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   md5.c                                              :+:      :+:    :+:   */
+/*   digest.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 17:57:50 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/03/11 18:31:50 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/10/29 16:34:34 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "project.h"
 #include "ft_md5.h"
 #include <stdint.h>
 #include <libft/ft_mem.h>
@@ -51,7 +52,7 @@ static uint32_t	leftrotate(uint32_t x, uint32_t round)
 	return ((x << shift) | (x >> (32 - shift)));
 }
 
-static void		set_hashing(t_global *g)
+static void		set_hashing(t_global_md5 *g)
 {
 	if (g->hashing)
 		return ;
@@ -71,7 +72,7 @@ static void		h_rot(uint32_t h[], uint32_t f, uint64_t i, uint32_t data)
 	h[1] += leftrotate(f, i);
 }
 
-void			md5_chunk(t_global *g, void *chunk)
+void			md5_chunk(t_global_md5 *g, void *chunk)
 {
 	uint32_t	*c32;
 	uint32_t	h[4];
