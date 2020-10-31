@@ -6,7 +6,7 @@
 /*   By: awoimbee <awoimbee@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/07 17:55:32 by awoimbee          #+#    #+#             */
-/*   Updated: 2020/10/31 18:11:54 by awoimbee         ###   ########.fr       */
+/*   Updated: 2020/10/31 22:53:58 by awoimbee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ char		*sha256_fd(t_fstream *s, bool echo)
 
 	ft_bzero(&g, sizeof(g));
 	g.stream = s;
-	while (ft_fstream_autofree(&s))
+	while (ft_fstream_fullblock_autofree(&s))
 	{
 		if (echo)
 			write(1, s->s.buf, s->s.len);
